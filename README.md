@@ -1,2 +1,2 @@
-# mailboxer-backend
-Backend to sync and manage emails for the mailboxer app
+# lupus-backend
+Backend to sync and manage emails for the lupus app
