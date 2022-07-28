@@ -10,3 +10,4 @@ rocket = { version = "0.5.0-rc.2", features = ["json", "uuid"] }
 serde = { version = "1.0.137", features = ["derive"] }
 imap = "3.0.0-alpha.7"
 native-tls = "0.2.10"
+rustls-connector = "0.16.1"
