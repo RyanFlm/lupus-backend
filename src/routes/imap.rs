@@ -1,17 +1,16 @@
-use imap;
+use crate::utils::imap::{connect, ConnectOptions};
 use rocket::serde::json::Json;
-use rustls_connector::RustlsConnector;
 
-#[get("/imap/folders?<domain>&<username>&<password>")]
-fn imap_get_folders(domain: String, username: String, password: String) -> Json<Vec<String>> {
-    let client = imap::ClientBuilder::new(domain, 143)
-        .starttls()
-        .connect(|domain, tcp| {
-            let ssl_conn = RustlsConnector::new_with_native_certs()?;
-            Ok(ssl_conn.connect(domain, tcp).unwrap())
-        })
-        .unwrap();
-    let mut session = client.login(username, password).map_err(|e| e.0).unwrap();
+#[get("/imap/folders?<host>&<username>&<password>")]
+fn imap_get_folders(host: String, username: String, password: String) -> Json<Vec<String>> {
+    let mut session = connect(ConnectOptions {
+        host,
+        port: 143,
+        username,
+        password,
+        starttls: true,
+    })
+    .expect("Failed to connect to IMAP server");
 
     let folder_list = session.list(None, Some("%")).map_err(|e| e).unwrap();
 

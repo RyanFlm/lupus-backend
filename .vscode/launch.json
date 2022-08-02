@@ -6,8 +6,7 @@
             "name": "Cargo launch",
             "cargo": {
                 "args": [
-                    "build",
-                    "--lib"
+                    "build"
                 ]
             },
             "program": "${cargo:program}",
