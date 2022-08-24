@@ -2,7 +2,7 @@ use rocket::serde::json::Json;
 
 use crate::models::response::Response;
 
-#[get("/", format = "json")]
+#[get("/", format = "any")]
 fn index() -> Json<Response> {
     Json(Response {
         success: true,

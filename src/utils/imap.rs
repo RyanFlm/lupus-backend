@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use imap::{self, Session};
+use imap::{self, Session, Error, ClientBuilder};
 use rustls_connector::RustlsConnector;
 
 pub struct ConnectOptions {
@@ -12,7 +12,7 @@ pub struct ConnectOptions {
 }
 
 pub fn connect(options: ConnectOptions) -> Result<Session<impl Read + Write>, String> {
-    let mut client_builder = imap::ClientBuilder::new(options.host, options.port);
+    let mut client_builder = ClientBuilder::new(options.host, options.port);
 
     // Enable STARTTLS if option is set
     if options.starttls {
@@ -21,15 +21,23 @@ pub fn connect(options: ConnectOptions) -> Result<Session<impl Read + Write>, St
 
     // Connect client
     let client_result = client_builder.connect(|domain, tcp| {
-        let connector = RustlsConnector::new_with_native_certs().unwrap();
-        let connection = connector.connect(domain, tcp).unwrap();
-        Ok(connection)
+        let connector_result = RustlsConnector::new_with_native_certs();
+        let connector = match connector_result {
+            Ok(c) => c,
+            Err(e) => return Err(Error::Io(e)),
+        };
+
+        let connection_result = connector.connect(domain, tcp);
+        match connection_result {
+            Ok(c) => Ok(c),
+            Err(e) => Err(Error::RustlsHandshake(e))
+        }
     });
 
     // Login to get active Session
     let client = match client_result {
         Ok(c) => c,
-        Err(_) => return Err(String::from("Failed to create client")),
+        Err(e) => return Err(format!("Faild to create client {:?}", e)),
     };
 
     let session_result = client.login(options.username, options.password).map_err(|e| e.0);
