@@ -10,3 +10,4 @@ rocket = { version = "0.5.0-rc.2", features = ["json", "uuid"] }
 serde = { version = "1.0.137", features = ["derive"] }
 imap = { version = "3.0.0-alpha.7", default-features = false, features = ["rustls-tls"] }
 rustls-connector = "0.16.1"
+utf7-imap = "0.3.0"
