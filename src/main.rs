@@ -1,8 +1,9 @@
 mod models;
 mod routes;
+mod utils;
+
 #[cfg(test)]
 mod tests;
-mod utils;
 
 #[macro_use]
 extern crate rocket;

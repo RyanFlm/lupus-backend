@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 
-use imap::{self, Session, Error, ClientBuilder};
+use imap::{self, ClientBuilder, Error, Session};
 use rustls_connector::RustlsConnector;
 
 pub struct ConnectOptions {
@@ -30,7 +30,7 @@ pub fn connect(options: ConnectOptions) -> Result<Session<impl Read + Write>, St
         let connection_result = connector.connect(domain, tcp);
         match connection_result {
             Ok(c) => Ok(c),
-            Err(e) => Err(Error::RustlsHandshake(e))
+            Err(e) => Err(Error::RustlsHandshake(e)),
         }
     });
 
@@ -40,7 +40,9 @@ pub fn connect(options: ConnectOptions) -> Result<Session<impl Read + Write>, St
         Err(e) => return Err(format!("Faild to create client {:?}", e)),
     };
 
-    let session_result = client.login(options.username, options.password).map_err(|e| e.0);
+    let session_result = client
+        .login(options.username, options.password)
+        .map_err(|e| e.0);
 
     match session_result {
         Ok(s) => Ok(s),

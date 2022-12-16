@@ -1,4 +1,4 @@
-use rocket::serde::json::{Json, serde_json::json};
+use rocket::serde::json::{serde_json::json, Json};
 
 use crate::models::response::Response;
 
@@ -7,7 +7,7 @@ fn index() -> Json<Response> {
     Json(Response {
         success: true,
         message: "Welcome to Lupus-Imap-Bridge".to_string(),
-        data: json!(())
+        data: json!(()),
     })
 }
 
